@@ -47,6 +47,8 @@
     --blue: #2E6F95;
     --terra: #C0492B;
     --terra-deep: #9E3A20;
+    --violet: #8E6BE8;
+    --violet-soft: #C9B6FF;
     --shadow: 0 1px 2px rgba(33,40,31,0.06), 0 6px 20px rgba(33,40,31,0.06);
     --radius: 14px;
   }
@@ -65,6 +67,8 @@
     --blue: #6FB3D6;
     --terra: #E08A6E;
     --terra-deep: #C97A5C;
+    --violet: #B79BF5;
+    --violet-soft: #D9C9FF;
     --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 10px 30px rgba(0,0,0,0.4);
   }
   * { box-sizing: border-box; }
@@ -134,8 +138,8 @@
     background: var(--paper);
     border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 0.95rem 1.05rem;
-    margin-bottom: 0.7rem;
+    padding: 0.7rem 0.82rem;
+    margin-bottom: 0.5rem;
     box-shadow: var(--shadow);
     transition: transform 0.18s ease, box-shadow 0.18s ease;
   }
@@ -241,11 +245,15 @@
   .donut-box { position: relative; width: 172px; height: 172px; margin: 0 auto; }
   .donut { width: 100%; height: 100%; display: block; }
   .donut-bg { transition: stroke .2s; }
-  .seg-arc { transition: stroke-dasharray .5s ease, stroke-dashoffset .5s ease; cursor: pointer; }
+  .seg-arc { transition: stroke-dasharray .5s ease, stroke-dashoffset .5s ease, opacity .25s ease; cursor: pointer; }
   .seg-arc:hover { stroke-width: 5.4; }
-  .donut-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
+  .donut.has-sel .seg-arc:not(.sel) { opacity: 0.38; }
+  .seg-arc.sel { stroke-width: 5.6; }
+  .donut-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; z-index: 2; }
+  .donut-center > * { pointer-events: auto; cursor: pointer; }
   .dc-amount { font-family: "Consolas", "SF Mono", "Courier New", monospace; font-size: 19px; font-weight: 800; color: var(--emerald-deep); line-height: 1; }
-  .dc-label { font-size: 10px; color: var(--ink-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 3px; }
+  .dc-label { font-size: 10px; color: var(--ink-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 3px; text-align: center; }
+  .dc-hint { font-size: 9px; color: var(--ink-muted); letter-spacing: 0.03em; margin-top: 3px; opacity: 0.85; text-align: center; }
 
   .ladder { display: flex; flex-direction: column; gap: 4px; margin-top: 0.4rem; }
   .brk { display: flex; align-items: center; gap: 10px; padding: 6px 9px; border-radius: 8px; background: var(--surface-2); font-size: 12px; position: relative; overflow: hidden; transition: background 0.2s; }
@@ -258,7 +266,7 @@
   .tip { display: flex; gap: 9px; align-items: flex-start; background: color-mix(in srgb, var(--emerald) 8%, transparent); border: 1px solid color-mix(in srgb, var(--emerald) 22%, transparent); border-radius: 9px; padding: 8px 10px; font-size: 12px; color: var(--ink); line-height: 1.5; }
   .tip .bulb { flex: 0 0 auto; font-size: 14px; }
 
-  .panel { display: none; }
+  .panel { display: none; position: relative; }
   .panel.active { display: block; animation: fade 0.3s ease; }
   @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
@@ -291,6 +299,100 @@
     .tab-btn { min-width: 52px; font-size: 10px; padding: 6px 3px; }
     h1 { font-size: 21px; }
   }
+  .opt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; margin-top: 0.4rem; }
+  .opt-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-2); }
+  .opt-item input[type="checkbox"] { width: 16px; height: 16px; flex: 0 0 auto; }
+  .opt-item input[type="number"] { width: 56px; height: 28px; margin-inline-start: 4px; }
+  .sankey-box { margin-top: 0.4rem; }
+  .flow { animation: skIn 0.5s ease both; }
+  @keyframes skIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .flow-head { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--ink-muted); margin-bottom: 8px; }
+  .flow-head b { color: var(--ink); font-family: "Consolas", monospace; font-size: 14px; margin-inline-start: 3px; }
+
+  .flow-chips { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  .flow-chip { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px; border-radius: 13px; background: linear-gradient(120deg, color-mix(in srgb, var(--c) 12%, var(--paper)), color-mix(in srgb, var(--c2) 20%, var(--paper))); border: 1px solid color-mix(in srgb, var(--c) 40%, transparent); transition: transform 0.15s, box-shadow 0.2s; position: relative; overflow: hidden; }
+  .flow-chip::before { content: ''; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 35%, color-mix(in srgb, var(--c2) 42%, transparent) 50%, transparent 65%); background-size: 260% 100%; animation: chipFlow 5s ease-in-out infinite; pointer-events: none; }
+  @keyframes chipFlow { to { background-position: -250% 0; } }
+  .flow-chip.sk-net { grid-column: 1 / -1; background: linear-gradient(120deg, color-mix(in srgb, var(--c) 18%, var(--paper)), color-mix(in srgb, var(--c2) 30%, var(--paper))); border-color: color-mix(in srgb, var(--c) 55%, transparent); }
+  .flow-chip:hover { transform: translateY(-2px); box-shadow: 0 8px 22px color-mix(in srgb, var(--c) 30%, transparent); }
+  .fc-top { display: flex; align-items: center; gap: 6px; position: relative; z-index: 1; }
+  .fc-dot { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 auto; background: var(--c); box-shadow: 0 0 8px var(--c), 0 0 16px var(--c); }
+  .fc-name { font-size: 11.5px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fc-pct { margin-inline-start: auto; font-family: "Consolas", monospace; color: var(--ink-muted); font-size: 11px; }
+  .fc-val { font-family: "Consolas", monospace; font-weight: 800; color: var(--c); line-height: 1.05; position: relative; z-index: 1; text-shadow: 0 0 10px color-mix(in srgb, var(--c) 60%, transparent); animation: twk 3.2s ease-in-out infinite; }
+  .fc-bar { height: 5px; border-radius: 3px; background: color-mix(in srgb, var(--c) 22%, transparent); overflow: hidden; margin-top: 2px; position: relative; z-index: 1; }
+  .fc-bar > i { display: block; height: 100%; background: linear-gradient(90deg, var(--c), var(--c2)); border-radius: 3px; box-shadow: 0 0 6px var(--c); }
+  .fc-flash { animation: fcFlash 0.6s ease; }
+  @keyframes twk { 0%, 100% { opacity: 0.78; text-shadow: 0 0 5px color-mix(in srgb, var(--c) 45%, transparent); } 50% { opacity: 1; text-shadow: 0 0 18px color-mix(in srgb, var(--c) 90%, transparent); } }
+  @keyframes fcFlash { 0% { filter: brightness(2) drop-shadow(0 0 10px var(--c)); } 100% { filter: brightness(1); } }
+  @keyframes sheen { to { background-position: -220% 0; } }
+  details.more { margin-top: 0.8rem; border-top: 1px dashed var(--border); padding-top: 0.5rem; }
+  details.more > summary { cursor: pointer; list-style: none; font-size: 12.5px; font-weight: 700; color: var(--emerald-deep); display: flex; align-items: center; gap: 6px; }
+  details.more > summary::-webkit-details-marker { display: none; }
+  details.more > summary::before { content: '▸'; transition: transform 0.2s; }
+  details.more[open] > summary::before { transform: rotate(90deg); }
+  details.more[open] > summary { margin-bottom: 0.4rem; }
+  @media (max-width: 420px) { .flow-chips { grid-template-columns: 1fr; } }
+  .brk-next { font-size: 11px; color: var(--ink-muted); text-align: center; margin-top: 4px; }
+  .hero { background: linear-gradient(135deg, var(--emerald), var(--emerald-deep)); color: #fff; border-radius: 16px; padding: 0.78rem 1rem 0.85rem; text-align: center; box-shadow: var(--shadow); margin-bottom: 0.55rem; position: relative; overflow: hidden; }
+  .hero::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 82% -10%, rgba(255,255,255,0.18), transparent 45%); pointer-events: none; }
+  .hero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.14) 50%, transparent 65%); background-size: 220% 100%; animation: sheen 6s linear infinite; pointer-events: none; }
+  .hero-label { font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.85; }
+  .hero-net { font-family: "Consolas", monospace; font-weight: 800; font-size: 29px; line-height: 1.05; margin: 2px 0 3px; text-shadow: 0 2px 10px rgba(0,0,0,0.25); }
+  .hero-sub { font-size: 12px; opacity: 0.92; }
+  .hero-sub b { font-family: "Consolas", monospace; font-weight: 700; }
+  .acc { border: 1px solid var(--border); border-radius: 12px; background: var(--paper); margin-bottom: 0.5rem; overflow: hidden; box-shadow: var(--shadow); transition: border-color 0.3s ease, box-shadow 0.3s ease; }
+  .acc-head { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0.72rem 0.9rem; background: transparent; border: none; cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 700; color: var(--ink); transition: color 0.15s; }
+  .acc-head:hover { color: var(--emerald-deep); }
+  .acc-head:active { transform: scale(0.99); }
+  .acc-head.pulse { animation: headPulse 1.8s ease-in-out infinite; }
+  .acc-ico { transition: transform 0.3s ease; color: var(--ink-muted); font-size: 13px; }
+  .acc.open { border-color: color-mix(in srgb, var(--emerald) 32%, var(--border)); }
+  .acc.open .acc-ico { transform: rotate(180deg); }
+  .acc.open .acc-head { color: var(--emerald-deep); }
+  .acc-body { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.4s ease, opacity 0.35s ease; padding: 0 0.85rem; }
+  .acc.open .acc-body { max-height: 1700px; padding-bottom: 0.75rem; opacity: 1; }
+  @keyframes headPulse { 0%, 100% { color: var(--ink); text-shadow: none; } 50% { color: var(--emerald-deep); text-shadow: 0 0 12px color-mix(in srgb, var(--emerald) 55%, transparent); } }
+  .cred-row { margin-top: 2px; }
+  /* ===== HUD scan on load ===== */
+  .hud-scan { position: absolute; inset: 0; pointer-events: none; overflow: hidden; border-radius: 14px; z-index: 6; }
+  .hud-scan::before { content: ''; position: absolute; left: 0; right: 0; top: -64px; height: 64px;
+    background: linear-gradient(180deg, transparent, rgba(14,110,78,0.16) 45%, rgba(46,160,149,0.32) 55%, transparent);
+    box-shadow: 0 0 22px rgba(46,160,149,0.30); }
+  .hud-scan.run::before { animation: hudLine 1.15s cubic-bezier(.4,0,.2,1); }
+  @keyframes hudLine { from { top: -64px; } to { top: 100%; } }
+
+  /* ===== net sphere: heartbeat halo around donut ===== */
+  .donut { position: relative; z-index: 1; }
+  .donut-center { z-index: 2; }
+  .donut-box::before { content: ''; position: absolute; inset: -12px; border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--emerald) 26%, transparent) 0%, transparent 68%);
+    animation: heart 2.6s ease-in-out infinite; z-index: 0; }
+  .donut-box::after { content: ''; position: absolute; inset: -4px; border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--emerald) 38%, transparent);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--emerald) 22%, transparent); pointer-events: none; z-index: 3; }
+  @keyframes heart { 0%, 100% { transform: scale(1); opacity: .5; } 50% { transform: scale(1.07); opacity: .82; } }
+
+  /* ===== neon credit-point rings ===== */
+  .nek-rings { display: flex; gap: 5px; align-items: center; margin-top: 5px; flex-wrap: wrap; min-height: 16px; }
+  .nek-ring { width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--emerald);
+    background: color-mix(in srgb, var(--emerald) 24%, transparent);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--emerald) 65%, transparent); animation: nekPop .45s ease-out; }
+  .nek-ring.part { border-color: color-mix(in srgb, var(--emerald) 55%, transparent);
+    background: conic-gradient(color-mix(in srgb, var(--emerald) 75%, transparent) calc(var(--f,0) * 1%), transparent 0); box-shadow: none; }
+  @keyframes nekPop { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.28); } 100% { transform: scale(1); opacity: 1; } }
+
+  /* ===== neon tax ladder ===== */
+  .brk.active { background: color-mix(in srgb, var(--emerald) 14%, transparent); border: 1px solid color-mix(in srgb, var(--emerald) 55%, transparent); box-shadow: 0 0 14px color-mix(in srgb, var(--emerald) 32%, transparent); }
+  .brk.active .brk-rate { color: var(--emerald-deep); text-shadow: 0 0 10px color-mix(in srgb, var(--emerald) 60%, transparent); }
+  .brk:hover { box-shadow: 0 0 10px color-mix(in srgb, var(--blue) 32%, transparent); }
+
+  /* ===== optimizer toggles (instead of plain checkboxes) ===== */
+  .opt-item input[type="checkbox"] { -webkit-appearance: none; appearance: none; width: 38px; height: 22px; border-radius: 11px; background: var(--surface-2); border: 1px solid var(--border); position: relative; cursor: pointer; transition: background .2s, border-color .2s, box-shadow .2s; flex: 0 0 auto; margin: 0; box-shadow: inset 0 1px 2px rgba(0,0,0,0.18); }
+  .opt-item input[type="checkbox"]::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.35); transition: transform .2s; }
+  .opt-item input[type="checkbox"]:checked { background: var(--emerald); border-color: var(--emerald); box-shadow: 0 0 10px color-mix(in srgb, var(--emerald) 45%, transparent), inset 0 1px 2px rgba(0,0,0,0.1); }
+  .opt-item input[type="checkbox"]:checked::after { transform: translateX(16px); }
+
   @media (prefers-reduced-motion: reduce) {
     * { animation: none !important; transition: none !important; }
   }
@@ -333,112 +435,139 @@
 
   <!-- ============ SALARY ============ -->
   <div class="panel active" id="panel-salary">
-    <div class="card">
-      <h2 data-i18n="s_income_h">💼 הכנסה</h2>
-      <p class="section-sub" data-i18n="s_income_sub">הזינו שכר יסוד ושעות נוספות. השעות מחושבות לפי תעריף השעה משכר היסוד.</p>
-      <div class="grid2">
-        <div><label><span data-i18n="lbl_base">שכר יסוד ברוטו (₪)</span></label><input type="number" id="s_base" value="12000" step="100" min="0"></div>
-        <div><label><span data-i18n="lbl_hours">שעות עבודה בחודש</span></label><input type="number" id="s_hours" value="182" step="1" min="1"></div>
-      </div>
-      <div class="grid2">
-        <div><label><span data-i18n="lbl_ot125">שעות נוספות 125%</span></label><input type="number" id="s_ot125" value="0" step="1" min="0"></div>
-        <div><label><span data-i18n="lbl_ot150">שעות נוספות 150%</span></label><input type="number" id="s_ot150" value="0" step="1" min="0"></div>
-      </div>
-      <div class="grid2">
-        <div><label><span data-i18n="lbl_night">שעות לילה נוספות (115%)</span></label><input type="number" id="s_night" value="0" step="1" min="0"></div>
-        <div><label><span data-i18n="lbl_shabbat">שעות שבת/חג (150%)</span></label><input type="number" id="s_shabbat" value="0" step="1" min="0"></div>
-      </div>
-      <label><span data-i18n="lbl_travel">נסיעות פטורות ממס (₪)</span><span class="info-dot" data-i18n-title="travel_title">?</span></label>
-      <input type="number" id="s_travel" value="0" step="10" min="0">
+    <div class="hud-scan" id="hudScan" aria-hidden="true"></div>
+
+    <div class="hero">
+      <div class="hero-label" data-i18n="receipt_net_label">שכר נטו לתשלום</div>
+      <div class="hero-net num" id="r_net">-</div>
+      <div class="hero-sub"><span data-i18n="sankey_from">ברוטו</span> <b id="r_gross">-</b> · <span data-i18n="m_takehome">נטו מהברוטו</span> <b id="r_takehome">-</b></div>
     </div>
 
-    <div class="card">
-      <h2 data-i18n="s_pens_h">🏦 הפרשות פנסיוניות</h2>
-      <p class="section-sub" data-i18n="s_pens_sub">הפרשת העובד מקטינה את ההכנסה החייבת במס (עד התקרה המותרת).</p>
-      <div class="grid2">
-        <div>
-          <label><span data-i18n="lbl_pension">הפרשת עובד לפנסיה</span></label>
-          <select id="s_pensionMode">
-            <option value="6" data-i18n="pension_opt_default">ברירת מחדל (6%)</option>
-            <option value="7" data-i18n="pension_opt_high">מוגברת (7%)</option>
-            <option value="custom" data-i18n="pension_opt_custom">אחוז מותאם</option>
-          </select>
+    <div class="acc open">
+      <button class="acc-head" type="button"><span data-i18n="acc_inputs">הכנסה וניכויים</span><span class="acc-ico">▾</span></button>
+      <div class="acc-body">
+        <div class="grid2">
+          <div><label><span data-i18n="lbl_base">שכר יסוד ברוטו (₪)</span></label><input type="number" id="s_base" value="12000" step="100" min="0"></div>
+          <div><label><span data-i18n="lbl_hours">שעות עבודה בחודש</span></label><input type="number" id="s_hours" value="182" step="1" min="1"></div>
         </div>
-        <div><label><span data-i18n="lbl_keren">קרן השתלמות עובד (%)</span></label><input type="number" id="s_keren" value="0" step="0.5" min="0"></div>
-      </div>
-      <div id="customPensionWrap" style="display:none;">
-        <label><span data-i18n="lbl_pension_custom">אחוז פנסיה מותאם אישית</span></label>
-        <input type="number" id="s_pensionCustom" value="6" step="0.5" min="0">
+        <div class="grid2">
+          <div>
+            <label><span data-i18n="lbl_pension">הפרשת עובד לפנסיה</span></label>
+            <select id="s_pensionMode">
+              <option value="6" data-i18n="pension_opt_default">ברירת מחדל (6%)</option>
+              <option value="7" data-i18n="pension_opt_high">מוגברת (7%)</option>
+              <option value="custom" data-i18n="pension_opt_custom">אחוז מותאם</option>
+            </select>
+          </div>
+          <div><label><span data-i18n="lbl_keren">קרן השתלמות עובד (%)</span></label><input type="number" id="s_keren" value="0" step="0.5" min="0"></div>
+        </div>
+        <div id="customPensionWrap" style="display:none;">
+          <label><span data-i18n="lbl_pension_custom">אחוז פנסיה מותאם אישית</span></label>
+          <input type="number" id="s_pensionCustom" value="6" step="0.5" min="0">
+        </div>
+        <div class="grid2">
+          <div><label><span data-i18n="lbl_ot125">שעות נוספות 125%</span></label><input type="number" id="s_ot125" value="0" step="1" min="0"></div>
+          <div><label><span data-i18n="lbl_ot150">שעות נוספות 150%</span></label><input type="number" id="s_ot150" value="0" step="1" min="0"></div>
+        </div>
+        <div class="grid2">
+          <div><label><span data-i18n="lbl_night">שעות לילה נוספות (115%)</span></label><input type="number" id="s_night" value="0" step="1" min="0"></div>
+          <div><label><span data-i18n="lbl_shabbat">שעות שבת/חג (150%)</span></label><input type="number" id="s_shabbat" value="0" step="1" min="0"></div>
+        </div>
+        <label><span data-i18n="lbl_travel">נסיעות פטורות ממס (₪)</span><span class="info-dot" data-i18n-title="travel_title">?</span></label>
+        <input type="number" id="s_travel" value="0" step="10" min="0">
+        <div class="cred-row">
+          <label><span data-i18n="lbl_points">נקודות זיכוי</span><span class="info-dot" data-i18n-title="points_title">?</span></label>
+          <input type="number" id="s_points" value="2.25" step="0.25" min="0">
+          <div class="nek-rings" id="nekRings" aria-hidden="true"></div>
+        </div>
       </div>
     </div>
 
-    <div class="card">
-      <h2 data-i18n="s_cred_h">🎫 זיכויים</h2>
-      <label><span data-i18n="lbl_points">נקודות זיכוי במס</span><span class="info-dot" data-i18n-title="points_title">?</span></label>
-      <input type="number" id="s_points" value="2.25" step="0.25" min="0">
-    </div>
+    <div class="acc open">
+      <button class="acc-head" type="button"><span data-i18n="acc_breakdown">פירוט ותרשים</span><span class="acc-ico">▾</span></button>
+      <div class="acc-body">
+        <div class="row"><span class="lbl" data-i18n="row_taxable">הכנסה חייבת במס</span><span class="val" id="r_taxable">-</span></div>
+        <div class="row"><span class="lbl" data-i18n="row_tax">מס הכנסה (אחרי זיכוי)</span><span class="val" id="r_tax">-</span></div>
+        <div class="row"><span class="lbl" data-i18n="row_yesef">מס יסף (מעל 60,130 ₪)</span><span class="val" id="r_yesef">-</span></div>
+        <div class="row"><span class="lbl" data-i18n="row_bl">ביטוח לאומי + בריאות</span><span class="val" id="r_bl">-</span></div>
+        <div class="row"><span class="lbl" data-i18n="row_pension">הפרשות עובד (פנסיה+קרן)</span><span class="val" id="r_pension">-</span></div>
+        <div class="row"><span class="lbl" data-i18n="row_travel">נסיעות (פטור, מתווסף)</span><span class="val" id="r_travel">-</span></div>
 
-    <div class="card">
-      <h2 data-i18n="s_detail_h">📊 פירוט הניכויים</h2>
-      <div class="row"><span class="lbl" data-i18n="row_gross">ברוטו כולל</span><span class="val" id="r_gross">-</span></div>
-      <div class="row"><span class="lbl" data-i18n="row_taxable">הכנסה חייבת במס</span><span class="val" id="r_taxable">-</span></div>
-      <div class="row"><span class="lbl" data-i18n="row_tax">מס הכנסה (אחרי זיכוי)</span><span class="val" id="r_tax">-</span></div>
-      <div class="row"><span class="lbl" data-i18n="row_yesef">מס יסף (מעל 60,130 ₪)</span><span class="val" id="r_yesef">-</span></div>
-      <div class="row"><span class="lbl" data-i18n="row_bl">ביטוח לאומי + בריאות</span><span class="val" id="r_bl">-</span></div>
-      <div class="row"><span class="lbl" data-i18n="row_pension">הפרשות עובד (פנסיה+קרן)</span><span class="val" id="r_pension">-</span></div>
-      <div class="row"><span class="lbl" data-i18n="row_travel">נסיעות (פטור, מתווסף)</span><span class="val" id="r_travel">-</span></div>
-
-      <div class="breakdown">
-        <div class="donut-wrap">
-          <div class="donut-box">
-            <svg class="donut" viewBox="0 0 36 36" id="donutSvg" role="img" aria-label="הרכב השכר">
-              <circle class="donut-bg" cx="18" cy="18" r="15.9155" fill="none" style="stroke:var(--surface-2)" stroke-width="3.4"></circle>
-            </svg>
-            <div class="donut-center">
-              <div class="dc-amount" id="donutNet">₪-</div>
-              <div class="dc-label" id="donutLabel">נטו</div>
+        <div class="breakdown">
+          <div class="donut-wrap">
+            <div class="donut-box">
+              <svg class="donut" viewBox="0 0 36 36" id="donutSvg" role="img" aria-label="הרכב השכר">
+                <circle class="donut-bg" cx="18" cy="18" r="15.9155" fill="none" style="stroke:var(--surface-2)" stroke-width="3.4"></circle>
+              </svg>
+              <div class="donut-center">
+                <div class="dc-amount" id="donutNet">₪-</div>
+                <div class="dc-label" id="donutLabel">נטו</div>
+                <div class="dc-hint" id="donutHint"></div>
+              </div>
             </div>
           </div>
+          <div class="legend" id="breakdownLegend"></div>
         </div>
-        <div class="legend" id="breakdownLegend"></div>
-      </div>
 
-      <div class="metrics">
-        <div class="metric"><div class="lbl" data-i18n="m_marginal">שיעור מס שולי</div><div class="val" id="r_marginal">-</div></div>
-        <div class="metric"><div class="lbl" data-i18n="m_takehome">נטו כחלק מהברוטו</div><div class="val" id="r_takehome">-</div></div>
-        <div class="metric"><div class="lbl" data-i18n="m_hourly">שכר שעה (ברוטו)</div><div class="val" id="r_hourly">-</div></div>
-        <div class="metric"><div class="lbl"><span data-i18n="m_empcost">עלות מעסיק משוערת</span><span class="info-dot" data-i18n-title="empcost_title">?</span></div><div class="val" id="r_empcost">-</div></div>
-      </div>
+        <h2 style="margin-top:1rem;" data-i18n="sankey_h">🪥 לאן הולכים הכספים?</h2>
+        <p class="section-sub" data-i18n="sankey_sub">זרימה ויזואלית</p>
+        <div class="sankey-box" id="sankeyBox"></div>
 
-      <h2 style="margin-top:1.1rem;" data-i18n="ladder_h">🪜 מדרגות המס שלך (2026)</h2>
-      <p class="section-sub" data-i18n="ladder_sub">מבוסס על ההכנסה החייבת</p>
-      <div class="ladder" id="taxLadder"></div>
-
-      <h2 style="margin-top:1.1rem;" data-i18n="annual_h">📅 תחזית שנתית</h2>
-      <div class="metrics3">
-        <div class="metric"><div class="lbl" data-i18n="m_annGross">ברוטו שנתי</div><div class="val" id="r_annGross">-</div></div>
-        <div class="metric"><div class="lbl" data-i18n="m_annTax">מס שנתי</div><div class="val" id="r_annTax">-</div></div>
-        <div class="metric"><div class="lbl" data-i18n="m_annNet">נטו שנתי</div><div class="val" id="r_annNet">-</div></div>
-      </div>
-
-      <h2 style="margin-top:1.1rem;" data-i18n="tips_h">💡 טיפים חכמים</h2>
-      <div class="tips" id="tipsBox"></div>
-
-      <div style="display:flex; gap:8px; margin-top:1rem; flex-wrap:wrap;">
-        <button class="reset-btn" id="resetSalary" data-i18n="reset_btn">↺ איפוס לברירת מחדל</button>
-        <button class="reset-btn" id="imgBtn" data-i18n="img_btn">🖼️ שמור כתמונה</button>
+        <div class="metrics">
+          <div class="metric"><div class="lbl" data-i18n="m_marginal">שיעור מס שולי</div><div class="val" id="r_marginal">-</div></div>
+          <div class="metric"><div class="lbl" data-i18n="m_hourly">שכר שעה (ברוטו)</div><div class="val" id="r_hourly">-</div></div>
+          <div class="metric"><div class="lbl"><span data-i18n="m_empcost">עלות מעסיק</span><span class="info-dot" data-i18n-title="empcost_title">?</span></div><div class="val" id="r_empcost">-</div></div>
+        </div>
       </div>
     </div>
 
-    <div class="receipt">
-      <div class="stamp" data-i18n="stamp">נטו</div>
-      <div class="label" data-i18n="receipt_net_label">שכר נטו לתשלום</div>
-      <div class="amount num" id="r_net">-</div>
-      <div class="sub" data-i18n="receipt_net_sub">מחושב ברגע זה בדפדפן שלכם</div>
+    <div class="acc">
+      <button class="acc-head" type="button"><span data-i18n="acc_ladder">מדרגות מס</span><span class="acc-ico">▾</span></button>
+      <div class="acc-body">
+        <div class="ladder" id="taxLadder"></div>
+      </div>
+    </div>
+
+    <div class="acc" id="accCredits">
+      <button class="acc-head" type="button"><span data-i18n="acc_credits">זיכויים וזכויות</span><span class="acc-ico">▾</span></button>
+      <div class="acc-body">
+        <h2 data-i18n="opt_h">אופטימיזציה זכויות</h2>
+        <p class="section-sub" data-i18n="opt_sub">סמנו את המצבים שלכם – נחשב נקודות זיכוי שאולי לא ניצלתם</p>
+        <div class="opt-grid">
+          <label class="opt-item"><input type="checkbox" id="opt_woman"><span data-i18n="opt_woman">אישה (חצי נקודה נוספת)</span></label>
+          <label class="opt-item"><input type="checkbox" id="opt_child5"><span data-i18n="opt_child5">ילד עד גיל 5</span></label>
+          <label class="opt-item"><input type="checkbox" id="opt_vet"><span data-i18n="opt_vet">חייל משוחרר (שבע חודשים)</span></label>
+          <label class="opt-item"><input type="checkbox" id="opt_degree"><span data-i18n="opt_degree">תואר אקדמי</span></label>
+          <label class="opt-item"><input type="checkbox" id="opt_immigrant"><span data-i18n="opt_immigrant">עולה חדש (18 חודשים ראשונים)</span></label>
+          <label class="opt-item"><input type="checkbox" id="opt_single"><span data-i18n="opt_single">הורה יחיד</span></label>
+          <label class="opt-item"><span data-i18n="opt_child617">ילדים גיל 6–17 (מספר)</span><input type="number" id="opt_child617" value="0" step="1" min="0"></label>
+        </div>
+        <button class="reset-btn" id="optCalc" data-i18n="opt_calc" style="margin-top:10px;">חשב נקודות מומלצות</button>
+        <p class="section-sub" id="optResult" style="margin-top:8px;"></p>
+        <button class="reset-btn" id="optApply" data-i18n="opt_apply" style="display:none;margin-top:4px;">החל על השכר</button>
+      </div>
+    </div>
+
+    <div class="acc">
+      <button class="acc-head" type="button"><span data-i18n="acc_annual">תחזית וטיפים</span><span class="acc-ico">▾</span></button>
+      <div class="acc-body">
+        <h2 data-i18n="annual_h">📅 תחזית שנתית</h2>
+        <div class="metrics3">
+          <div class="metric"><div class="lbl" data-i18n="m_annGross">ברוטו שנתי</div><div class="val" id="r_annGross">-</div></div>
+          <div class="metric"><div class="lbl" data-i18n="m_annTax">מס שנתי</div><div class="val" id="r_annTax">-</div></div>
+          <div class="metric"><div class="lbl" data-i18n="m_annNet">נטו שנתי</div><div class="val" id="r_annNet">-</div></div>
+        </div>
+        <h2 style="margin-top:1rem;" data-i18n="tips_h">💡 טיפים חכמים</h2>
+        <div class="tips" id="tipsBox"></div>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:8px; margin-top:0.6rem; flex-wrap:wrap;">
+      <button class="reset-btn" id="resetSalary" data-i18n="reset_btn">↺ איפוס לברירת מחדל</button>
+      <button class="reset-btn" id="imgBtn" data-i18n="img_btn">🖼️ שמור כתמונה</button>
     </div>
     <p class="calc-basis" data-i18n="calc_basis"></p>
   </div>
-
   <!-- ============ INVERSE ============ -->
   <div class="panel" id="panel-inverse">
     <div class="card">
@@ -559,9 +688,31 @@
 <script>
 "use strict";
 
+window.addEventListener('error', function (e) {
+  try {
+    var msg = (e && (e.message || (e.error && e.error.message) || e.error)) || '';
+    msg = String(msg);
+    // Ignore environment / sandbox noise (e.g. the Arena preview harness accessing its
+    // cross-origin parent frame). These are NOT bugs in this page — surfacing them only
+    // makes a perfectly working page look broken.
+    if (/cross-?origin|Blocked a frame|accessing a cross-origin|Script error|SecurityError/i.test(msg)) return;
+    var b = document.getElementById('errBanner');
+    if (!b) { b = document.createElement('div'); b.id = 'errBanner'; b.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:9999;background:#7a1f1f;color:#fff;font:12px/1.4 monospace;padding:8px 12px;white-space:pre-wrap;'; document.body.appendChild(b); }
+    b.textContent = 'JS error: ' + msg + (e.filename ? ' @' + e.filename + ':' + e.lineno : '');
+  } catch (err) {}
+});
+
 /* ===== i18n ===== */
 const I18N = {
   he: {
+    sankey_h: "לאן הולכים הכספים?",
+    sankey_sub: "זרימה ויזואלית: מהברוטו אל הנטו ומה שיורד למיסים ולחיסכון",
+    sankey_net: "נטו", sankey_tax: "מס הכנסה", sankey_yesef: "מס יסף", sankey_bl: "ביטוח לאומי", sankey_pension: "פנסיה+קרן", sankey_from: "ברוטו", more_details: "עוד נתונים", acc_inputs: "הכנסה וניכויים", acc_breakdown: "פירוט ותרשים", acc_ladder: "מדרגות מס", acc_credits: "זיכויים וזכויות", acc_annual: "תחזית וטיפים",
+    opt_h: "אופטימיזציה זכויות",
+    opt_sub: "סמנו את המצבים שלכם - נחשב נקודות זיכוי שאולי לא ניצלתם",
+    opt_woman: "אישה (חצי נקודה נוספת)", opt_child5: "ילד עד גיל 5", opt_child617: "ילדים גיל 6-17 (מספר)", opt_vet: "חייל משוחרר (שבע חודשים)", opt_degree: "תואר אקדמי", opt_immigrant: "עולה חדש (18 חודשים ראשונים)", opt_single: "הורה יחיד",
+    opt_calc: "חשב נקודות מומלצות", opt_result: "כרגע מדוחים {0} נקודות. אפשר להגיע ל-{1} → תוספת {2} לחודש נטו", opt_none: "כל הנקודות מנוצלות - מעולה!", opt_apply: "החל על השכר", opt_applied: "נקודות מעודכנות: {0} (זיכוי {1})",
+    ladder_next: "נשארו {0} עד מדרגת המס הבאה השנה",
     brand_sub: "מחשבון שכר 2026",
     share_title: "שתף קישור עם החישוב",
     theme_title: "החלף ערכת נושא",
@@ -589,7 +740,7 @@ const I18N = {
     ladder_h: "🪜 מדרגות המס שלך (2026)", annual_h: "📅 תחזית שנתית",
     m_annGross: "ברוטו שנתי", m_annTax: "מס שנתי", m_annNet: "נטו שנתי",
     tips_h: "💡 טיפים חכמים", reset_btn: "↺ איפוס לברירת מחדל",
-    receipt_net_label: "שכר נטו לתשלום", receipt_net_sub: "מחושב ברגע זה בדפדפן שלכם", stamp: "נטו", legend_net: "נטו",
+    receipt_net_label: "שכר נטו לתשלום", receipt_net_sub: "מחושב ברגע זה בדפדפן שלכם", stamp: "נטו", legend_net: "נטו", donut_back: "עוד פעם ← נטו", donut_hint: "לחץ על פרוסה",
     inv_h: "🎯 כמה ברוטו אתם צריכים?", inv_sub: "הזינו את השכר נטו שאתם רוצים לקבל — והמחשבון יחשב את הברוטו הנדרש (פתרון הפוך של מדרגות המס).",
     lbl_inv_net: "שכר נטו רצוי (₪)", lbl_inv_pension: "הפרשת עובד לפנסיה (%)", lbl_inv_points: "נקודות זיכוי", inv_p0: "ללא",
     row_inv_gross: "ברוטו נדרש (לתשלום למעסיק)", row_inv_tax: "מס הכנסה שישולם", row_inv_bl: "ביטוח לאומי + בריאות", row_inv_pension: "הפרשה לפנסיה (6%)",
@@ -620,6 +771,14 @@ const I18N = {
     lang_btn_he: "🌐 РУС", lang_btn_ru: "🌐 עב"
   },
   ru: {
+    sankey_h: "Куда уходят деньги?",
+    sankey_sub: "визуализация потока: от брутто к нетто и что уходит в налоги и сбережения",
+    sankey_net: "Нетто", sankey_tax: "Подоходный", sankey_yesef: "Мас-йесеф", sankey_bl: "Битуах Леуми", sankey_pension: "Пенсия+Керен", sankey_from: "Брутто", more_details: "Подробнее", acc_inputs: "Доход и отчисления", acc_breakdown: "Детализация и диаграмма", acc_ladder: "Налоговые ступени", acc_credits: "Вычеты и права", acc_annual: "Прогноз и советы",
+    opt_h: "Оптимизация прав",
+    opt_sub: "Отметьте ситуацию - посчитаем налоговые баллы, которые вы, возможно, не используете",
+    opt_woman: "Женщина (+0,5 балла)", opt_child5: "Ребёнок до 5 лет", opt_child617: "Детей 6-17 лет (число)", opt_vet: "Демобилизованный (36 мес.)", opt_degree: "Высшее образование", opt_immigrant: "Новый репатриант (18 мес.)", opt_single: "Одинокий родитель",
+    opt_calc: "Рассчитать баллы", opt_result: "Сейчас заявлено {0} баллов. Можно до {1} → +{2} в месяц к нетто", opt_none: "Все баллы учтены - отлично!", opt_apply: "Применить к зарплате", opt_applied: "Учтено баллов: {0} (вычет {1})",
+    ladder_next: "Осталось {0} до следующей налоговой ступени в этом году",
     brand_sub: "Калькулятор зарплаты 2026",
     share_title: "Поделиться ссылкой на расчёт",
     theme_title: "Сменить тему",
@@ -647,7 +806,7 @@ const I18N = {
     ladder_h: "🪜 Ваши налоговые ступени (2026)", annual_h: "📅 Годовая проекция",
     m_annGross: "Брутто в год", m_annTax: "Налог в год", m_annNet: "Нетто в год",
     tips_h: "💡 Умные советы", reset_btn: "↺ Сброс по умолчанию",
-    receipt_net_label: "Чистая зарплата к выплате", receipt_net_sub: "Рассчитано прямо сейчас в вашем браузере", stamp: "НЕТТО", legend_net: "Нетто",
+    receipt_net_label: "Чистая зарплата к выплате", receipt_net_sub: "Рассчитано прямо сейчас в вашем браузере", stamp: "НЕТТО", legend_net: "Нетто", donut_back: "ещё раз → нетто", donut_hint: "нажми на сектор",
     inv_h: "🎯 Сколько брутто вам нужно?", inv_sub: "Введите желаемую чистую зарплату — калькулятор вычислит нужное брутто (обратное решение налоговых ступеней).",
     lbl_inv_net: "Желаемая чистая зарплата (₪)", lbl_inv_pension: "Отчисление в пенсию работника (%)", lbl_inv_points: "Налоговые вычеты", inv_p0: "нет",
     row_inv_gross: "Нужное брутто (к оплате работодателю)", row_inv_tax: "Подоходный к уплате", row_inv_bl: "Битуах Леуми + здоровье", row_inv_pension: "Отчисление в пенсию (6%)",
@@ -678,6 +837,14 @@ const I18N = {
     lang_btn_he: "🌐 EN", lang_btn_ru: "🌐 EN", lang_btn_en: "🌐 EN"
   },
   en: {
+    sankey_h: "Where your money goes",
+    sankey_sub: "visual flow: from gross to net and what goes to tax and savings",
+    sankey_net: "Net", sankey_tax: "Income tax", sankey_yesef: "Surcharge", sankey_bl: "Nat. Insurance", sankey_pension: "Pension+Fund", sankey_from: "Gross", more_details: "More details", acc_inputs: "Income &amp; contributions", acc_breakdown: "Breakdown &amp; chart", acc_ladder: "Tax brackets", acc_credits: "Credits &amp; rights", acc_annual: "Projection &amp; tips",
+    opt_h: "Rights optimizer",
+    opt_sub: "tick your situation - we compute tax credits you may be missing",
+    opt_woman: "Woman (+0.5 point)", opt_child5: "Child under 5", opt_child617: "Children 6-17 (count)", opt_vet: "Released soldier (36 mo.)", opt_degree: "Academic degree", opt_immigrant: "New immigrant (first 18 mo.)", opt_single: "Single parent",
+    opt_calc: "Compute points", opt_result: "Currently {0} points. You can reach {1} → +{2} per month to net", opt_none: "All credits claimed - great!", opt_apply: "Apply to salary", opt_applied: "Points applied: {0} (credit {1})",
+    ladder_next: "{0} left to the next tax bracket this year",
     brand_sub: "Salary Calculator 2026",
     share_title: "Share a link to this calculation",
     theme_title: "Switch theme",
@@ -699,7 +866,7 @@ const I18N = {
     s_cred_h: "🎫 Credits", lbl_points: "Tax credit points", points_title: "Resident: 2.25 points (≈544 ₪ monthly credit). Woman +0.5, children, new immigrant and more — add per your entitlement. One point = 242 ₪ per month.",
     s_detail_h: "📊 Deduction breakdown",
     row_gross: "Total gross", row_taxable: "Taxable income", row_tax: "Income tax (after credit)", row_yesef: "Surcharge tax (above 60,130 ₪)",
-    row_bl: "National Insurance + health", row_pension: "Employee contributions (pension+fund)", row_travel: "Travel (tax-free, added)", legend_net: "Net",
+    row_bl: "National Insurance + health", row_pension: "Employee contributions (pension+fund)", row_travel: "Travel (tax-free, added)", legend_net: "Net", donut_back: "tap again → net", donut_hint: "tap a slice",
     m_marginal: "Marginal tax rate", m_takehome: "Net as % of gross", m_hourly: "Hourly rate (gross)", m_empcost: "Estimated employer cost",
     empcost_title: "Rough estimate: gross + employer NI (7.6%) + employer pension (6.5%) + training fund (7.5% if applicable) + severance accrual (8.33%).",
     ladder_h: "🪜 Your 2026 tax brackets", annual_h: "📅 Annual projection",
@@ -806,6 +973,25 @@ function getPensionPct() {
   if (mode === 'custom') return val('s_pensionCustom');
   return parseFloat(mode);
 }
+let nekPrev = -1;
+function renderNekRings(pts) {
+  const box = document.getElementById('nekRings');
+  if (!box) return;
+  if (nekPrev === pts) return;
+  nekPrev = pts;
+  const full = Math.floor(pts + 1e-9);
+  const frac = +(pts - full).toFixed(2);
+  let html = '';
+  for (let i = 0; i < full; i++) html += '<span class="nek-ring"></span>';
+  if (frac > 0.01) html += '<span class="nek-ring part" style="--f:' + Math.round(frac * 100) + '"></span>';
+  box.innerHTML = html;
+}
+function triggerHud() {
+  const h = document.getElementById('hudScan');
+  if (!h) return;
+  h.classList.remove('run'); void h.offsetWidth; h.classList.add('run');
+}
+
 function updateSalary() {
   const base = val('s_base');
   const hours = val('s_hours') || 182;
@@ -832,9 +1018,11 @@ function updateSalary() {
     { label: t('row_tax'), value: taxNet, color: 'var(--terra)' },
     { label: t('row_yesef'), value: yesef, color: 'var(--terra-deep)' },
     { label: t('row_bl'), value: bl, color: 'var(--blue)' },
-    { label: t('row_pension'), value: preTax, color: 'var(--gold)' }
+    { label: t('row_pension'), value: preTax, color: 'var(--violet)' }
   ].filter(s => s.value > 0);
+  renderNekRings(points);
   renderDonut(segs, gross, net);
+  renderSankey(gross, net, segs);
   renderLadder(taxable);
   renderTips({ gross, net, taxable, pensionPct, kerenPct, points, travel: val('s_travel') });
   setText('r_annGross', fmt(gross * 12)); setText('r_annTax', fmt((taxNet + yesef) * 12)); setText('r_annNet', fmt(net * 12));
@@ -853,6 +1041,8 @@ function renderLadder(taxable) {
       ${active ? '<span class="brk-you">📍 ' + t('ladder_here') + ' · ' + fmt(taxable) + '</span>' : ''}
     </div>`;
   }).join('');
+  const nxt = BRACKETS.find(function (b) { return b[0] > taxable; });
+  if (nxt) { el.innerHTML += '<div class=brk-next>' + t('ladder_next').replace('{0}', fmt(Math.max(0, nxt[0] - taxable))) + '</div>'; }
 }
 
 function renderTips(d) {
@@ -934,23 +1124,139 @@ function renderBar(segs, total, barId, legendId) {
   legend.innerHTML = segs.map(s => `<div class="legend-item"><span class="sw" style="background:${s.color}"></span>${s.label}<span class="lv">${pct(s.value / sum * 100)}</span></div>`).join('');
 }
 
+let donutSel = null;
+let lastSegs = null, lastNet = 0;
 function renderDonut(segs, gross, net) {
   const svg = document.getElementById('donutSvg');
   const legend = document.getElementById('breakdownLegend');
   if (!svg || !legend) return;
+  lastSegs = segs; lastNet = net;
   const total = gross || 1;
   let cum = 0;
   let html = '<circle class="donut-bg" cx="18" cy="18" r="15.9155" fill="none" style="stroke:var(--surface-2)" stroke-width="3.4"></circle>';
-  segs.forEach(s => {
+  segs.forEach((s, idx) => {
     const len = s.value / total * 100;
     let off = (25 - cum) % 100; if (off < 0) off += 100;
-    html += `<circle class="seg-arc" cx="18" cy="18" r="15.9155" fill="none" style="stroke:${s.color}" stroke-width="3.4" stroke-dasharray="${len.toFixed(2)} ${(100 - len).toFixed(2)}" stroke-dashoffset="${off.toFixed(2)}" transform="rotate(-90 18 18)" title="${s.label}: ${fmt(s.value)} (${pct(len)})"></circle>`;
+    html += `<circle class="seg-arc" cx="18" cy="18" r="15.9155" fill="none" style="stroke:${s.color}" stroke-width="3.4" stroke-dasharray="${len.toFixed(2)} ${(100 - len).toFixed(2)}" stroke-dashoffset="${off.toFixed(2)}" transform="rotate(-90 18 18)" data-i="${idx}" data-label="${s.label}" title="${s.label}: ${fmt(s.value)} (${pct(len)})"></circle>`;
     cum += len;
   });
   svg.innerHTML = html;
-  legend.innerHTML = segs.map(s => `<div class="legend-item"><span class="sw" style="background:${s.color}"></span>${s.label}<span class="lv">${pct(s.value / total * 100)}</span></div>`).join('');
-  const dn = document.getElementById('donutNet'); if (dn) dn.textContent = fmt(net);
-  const dl = document.getElementById('donutLabel'); if (dl) dl.textContent = t('legend_net');
+  svg.querySelectorAll('.seg-arc').forEach(arc => {
+    arc.addEventListener('click', () => {
+      const i = parseInt(arc.dataset.i, 10);
+      const s = segs[i]; if (!s) return;
+      donutSel = (donutSel === s.label) ? null : s.label;
+      applyDonutSel(); updateDonutCenter();
+    });
+  });
+  legend.innerHTML = segs.map(s => `<div class="legend-item" data-label="${s.label}" style="cursor:pointer"><span class="sw" style="background:${s.color}"></span>${s.label}<span class="lv">${pct(s.value / total * 100)}</span></div>`).join('');
+  legend.querySelectorAll('.legend-item').forEach(li => {
+    li.addEventListener('click', () => {
+      const lab = li.dataset.label;
+      const s = segs.find(x => x.label === lab); if (!s) return;
+      donutSel = (donutSel === lab) ? null : lab;
+      applyDonutSel(); updateDonutCenter();
+    });
+  });
+  applyDonutSel();
+  updateDonutCenter();
+}
+function applyDonutSel() {
+  const svg = document.getElementById('donutSvg');
+  if (!svg) return;
+  svg.querySelectorAll('.seg-arc').forEach(a => a.classList.remove('sel'));
+  if (donutSel) {
+    const a = svg.querySelector('.seg-arc[data-label="' + donutSel + '"]');
+    if (a) a.classList.add('sel');
+    svg.classList.add('has-sel');
+  } else {
+    svg.classList.remove('has-sel');
+  }
+}
+function updateDonutCenter() {
+  const dn = document.getElementById('donutNet');
+  const dl = document.getElementById('donutLabel');
+  const dh = document.getElementById('donutHint');
+  const segs = lastSegs || [];
+  let s = null;
+  if (donutSel) s = segs.find(x => x.label === donutSel) || null;
+  if (s) {
+    if (dn) { dn.textContent = fmt(s.value); flash('donutNet'); }
+    if (dl) dl.textContent = s.label;
+    if (dh) dh.textContent = t('donut_back');
+  } else {
+    if (dn) { dn.textContent = fmt(lastNet); flash('donutNet'); }
+    if (dl) dl.textContent = t('legend_net');
+    if (dh) dh.textContent = t('donut_hint');
+  }
+}
+
+let sankeyFirst = true;
+const sankeyPrev = {};
+function renderSankey(gross, net, segs) {
+  const box = document.getElementById('sankeyBox');
+  if (!box) return;
+  if (!(gross > 0)) { box.innerHTML = ''; return; }
+  const FLOW = {
+    'var(--emerald)':   { c: '#2FD08A', c2: '#7CF0C0' },
+    'var(--terra)':     { c: '#FF6B5C', c2: '#FFB199' },
+    'var(--terra-deep)':{ c: '#FF9F43', c2: '#FFD08A' },
+    'var(--blue)':      { c: '#4FC3F7', c2: '#9DE4FF' },
+    'var(--violet)':    { c: '#9D7BF0', c2: '#C9B6FF' }
+  };
+  const SHORT = { 'var(--emerald)': t('sankey_net'), 'var(--terra)': t('sankey_tax'), 'var(--terra-deep)': t('sankey_yesef'), 'var(--blue)': t('sankey_bl'), 'var(--violet)': t('sankey_pension') };
+  let chips = '';
+  segs.forEach((s, idx) => {
+    const pal = FLOW[s.color] || { c: '#bbb', c2: '#ddd' };
+    const p = s.value / gross * 100;
+    const isNet = (SHORT[s.color] || '') === t('sankey_net');
+    const changed = sankeyPrev[s.color] !== undefined && sankeyPrev[s.color] !== s.value;
+    sankeyPrev[s.color] = s.value;
+    const num = isNet ? 21 : 16;
+    chips += `<div class="flow-chip${isNet ? ' sk-net' : ''}${changed ? ' fc-flash' : ''}" data-cat="${s.color}" style="--c:${pal.c};--c2:${pal.c2}">` +
+      `<div class="fc-top"><span class="fc-dot"></span><span class="fc-name">${SHORT[s.color] || s.label}</span><span class="fc-pct">${p.toFixed(0)}%</span></div>` +
+      `<span class="fc-val" data-val="${s.value}" style="font-size:${num}px;animation-delay:${(idx * 0.3).toFixed(2)}s">${fmt(s.value)}</span>` +
+      `<span class="fc-bar"><i style="width:${p.toFixed(1)}%"></i></span></div>`;
+  });
+  const head = `<div class="flow-head"><span>${t('sankey_from')}<b>${fmt(gross)}</b></span><span>${t('sankey_net')}<b>${fmt(net)}</b></span></div>`;
+  box.innerHTML = `<div class="flow">${head}<div class="flow-chips">${chips}</div></div>`;
+  if (sankeyFirst) {
+    sankeyFirst = false;
+    if (typeof requestAnimationFrame === 'function') {
+      const t0 = (typeof performance !== 'undefined' ? performance.now() : Date.now());
+      box.querySelectorAll('.fc-val').forEach(el => {
+        const to = parseFloat(el.dataset.val) || 0, dur = 700;
+        (function step(now) {
+          const tt = (now !== undefined ? now : (typeof performance !== 'undefined' ? performance.now() : Date.now()));
+          const k = Math.min(1, (tt - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+          el.textContent = fmt(to * e);
+          if (k < 1) requestAnimationFrame(step); else el.textContent = fmt(to);
+        })(t0);
+      });
+    }
+  }
+}
+
+function recommendedPoints() {
+  let p = document.getElementById('opt_woman').checked ? 2.75 : 2.25;
+  if (document.getElementById('opt_child5').checked) p += 2.5;
+  p += (parseInt(document.getElementById('opt_child617').value, 10) || 0);
+  if (document.getElementById('opt_vet').checked) p += 2;
+  if (document.getElementById('opt_degree').checked) p += 1;
+  if (document.getElementById('opt_immigrant').checked) p += 4.5;
+  if (document.getElementById('opt_single').checked) p += 1;
+  return p;
+}
+function computeOpt() {
+  const res = document.getElementById('optResult'), apply = document.getElementById('optApply');
+  if (!res) return;
+  const rec = recommendedPoints(), cur = val('s_points');
+  const head = document.querySelector('#accCredits .acc-head');
+  if (rec <= cur) { res.textContent = t('opt_none'); if (apply) apply.style.display = 'none'; if (head) head.classList.remove('pulse'); return; }
+  const gain = Math.round((rec - cur) * CREDIT_POINT);
+  res.textContent = t('opt_result').replace('{0}', cur).replace('{1}', rec).replace('{2}', fmt(gain));
+  if (apply) apply.style.display = 'inline-block';
+  if (head) head.classList.add('pulse');
 }
 
 /* ===== share result as image (PNG) ===== */
@@ -962,10 +1268,10 @@ function downloadCard() {
     const gross = r.g, net = r.net, travel = val('s_travel');
     const segs = [
       { label: t('legend_net'), value: Math.max(0, net - travel), color: '#0E6E4E' },
-      { label: t('row_tax'), value: r.taxNet, color: '#C0492B' },
-      { label: t('row_yesef'), value: r.yesef, color: '#9E3A20' },
-      { label: t('row_bl'), value: r.bl, color: '#2E6F95' },
-      { label: t('row_pension'), value: r.preTax, color: '#B8860B' }
+      { label: t('row_tax'), value: r.taxNet, color: '#E05545' },
+      { label: t('row_yesef'), value: r.yesef, color: '#E08A2E' },
+      { label: t('row_bl'), value: r.bl, color: '#2E8FBF' },
+      { label: t('row_pension'), value: r.preTax, color: '#8E6BE8' }
     ].filter(s => s.value > 0);
     const total = gross || 1;
     const W = 600, H = 760;
@@ -1069,13 +1375,30 @@ document.getElementById('s_pensionMode').addEventListener('change', function () 
 ['g_salary', 'g_pension', 'g_exempt', 'g_points'].forEach(id => document.getElementById(id).addEventListener('input', updatePension));
 document.getElementById('imgBtn').addEventListener('click', downloadCard);
 
+function applyOpt() {
+  var sp = document.getElementById('s_points');
+  var rec = recommendedPoints();
+  if (sp) sp.value = rec;
+  updateSalary();
+  var res = document.getElementById('optResult');
+  if (res) res.textContent = t('opt_applied').replace('{0}', rec).replace('{1}', fmt(Math.round(rec * CREDIT_POINT)));
+  var apply = document.getElementById('optApply');
+  if (apply) apply.style.display = 'none';
+  var head = document.querySelector('#accCredits .acc-head');
+  if (head) head.classList.remove('pulse');
+}
+['opt_woman', 'opt_child5', 'opt_vet', 'opt_degree', 'opt_immigrant', 'opt_single', 'opt_child617'].forEach(function (id) { var el = document.getElementById(id); if (el) el.addEventListener('input', applyOpt); });
+document.getElementById('optCalc').addEventListener('click', applyOpt);
+document.getElementById('optApply').addEventListener('click', function () { var el = document.getElementById('s_points'); if (el) el.value = recommendedPoints(); updateSalary(); var a = document.getElementById('optApply'); if (a) a.style.display = 'none'; var h = document.querySelector('#accCredits .acc-head'); if (h) h.classList.remove('pulse'); });
 document.getElementById('resetSalary').addEventListener('click', () => {
   const defaults = { s_base: 12000, s_hours: 182, s_ot125: 0, s_ot150: 0, s_night: 0, s_shabbat: 0, s_travel: 0, s_pensionMode: '6', s_keren: 0, s_pensionCustom: 6, s_points: 2.25 };
   for (const [k, v] of Object.entries(defaults)) { const el = document.getElementById(k); if (el) el.value = v; }
   document.getElementById('customPensionWrap').style.display = 'none';
   updateSalary(); toast(t('reset_toast'));
+  var h = document.querySelector('#accCredits .acc-head'); if (h) h.classList.remove('pulse');
 });
 document.getElementById('shareBtn').addEventListener('click', shareState);
+document.getElementById('donutCenter').addEventListener('click', function () { donutSel = null; applyDonutSel(); updateDonutCenter(); });
 document.getElementById('langToggle').addEventListener('click', () => {
   lang = LANGS[(LANGS.indexOf(lang) + 1) % LANGS.length];
   try { localStorage.setItem('lang', lang); } catch (e) {}
@@ -1088,7 +1411,11 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    if (btn.dataset.tab === 'salary') triggerHud();
   });
+});
+document.querySelectorAll('.acc-head').forEach(h => {
+  h.addEventListener('click', () => { h.parentElement.classList.toggle('open'); h.classList.remove('pulse'); });
 });
 
 const themeToggle = document.getElementById('themeToggle');
@@ -1111,8 +1438,9 @@ if (themeToggle) {
 
 // restore language preference, then apply shared state, then render
 try { const l = localStorage.getItem('lang'); if (l === 'ru' || l === 'he' || l === 'en') lang = l; } catch (e) {}
-applyHash();
-applyLang();
+try { applyHash(); } catch (e) {}
+try { applyLang(); } catch (e) {}
+try { triggerHud(); } catch (e) {}
 </script>
 </body>
 </html>
