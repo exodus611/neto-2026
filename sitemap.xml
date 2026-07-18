@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- URL сайта: https://exodus611.github.io/neto-2026
-     Имя файла в <loc> совпадает с тем, как залит файл (neto-2026.html). -->
+     Имя файла в <loc> совпадает с тем, как залит файл (корень сайта, index.html). -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://exodus611.github.io/neto-2026/neto-2026.html</loc>
+    <loc>https://exodus611.github.io/neto-2026/</loc>
     <lastmod>2026-07-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
